@@ -16,7 +16,7 @@ This project demonstrates real-world Data Engineering concepts, including:
 
 # Architecture Diagram
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/ETLFlow.png)
 
 ---
 
