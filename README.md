@@ -16,7 +16,7 @@ This project demonstrates real-world Data Engineering concepts, including:
 
 # Architecture Diagram
 
-![Architecture](docs/ETLFlow.png)
+<img width="1536" height="1024" alt="ETL Flow" src="https://github.com/user-attachments/assets/614e9373-a7d5-4bf5-9787-0779840daa37" />
 
 ---
 
@@ -308,25 +308,25 @@ ETL-and-SCD-Type2-Implementation-Using-SSIS-and-SQL-Server/
 
 ## SSIS Packages
 
-(Add screenshots here)
+<img width="678" height="1308" alt="SSIS Packages" src="https://github.com/user-attachments/assets/77ee73b7-c11a-4b6c-bc84-e55a1cc4a5da" />
 
 ---
 
-## Data Warehouse Tables
+## Control Flow (Master ETL)
 
-(Add screenshots here)
+<img width="1600" height="707" alt="Control Flow (Master_ETL)" src="https://github.com/user-attachments/assets/18831856-c8f2-4447-af35-a40a5807ba1a" />
 
 ---
 
 ## SCD Type 2 Results
 
-(Add screenshots here)
+<img width="1600" height="962" alt="Data Flow (Single_ETL)" src="https://github.com/user-attachments/assets/f6e9713a-7445-453c-b990-35e872fb71dd" />
 
 ---
 
 ## Fact Table Loading
 
-(Add screenshots here)
+<img width="1136" height="1002" alt="Data Flow (Fact Load)" src="https://github.com/user-attachments/assets/e665ff8c-aba4-498c-afdf-028cb9581e03" />
 
 ---
 
