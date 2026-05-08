@@ -103,7 +103,7 @@ The ETL process follows these stages:
 
 ---
 
-# Staging Layer
+# Planned Staging Layer
 
 A staging layer is used between source systems and the Data Warehouse.
 
@@ -170,7 +170,7 @@ When a source record changes:
 
 # Incremental Loading
 
-The ETL pipeline supports incremental loading to process only newly inserted or modified records.
+The ETL pipeline supports incremental loading, processing only newly inserted or modified records.
 
 ## Benefits
 
@@ -196,7 +196,7 @@ The ETL pipeline performs multiple transformations, including:
 
 ---
 
-# Error Handling & Logging
+#  Planned Error Handling & Logging
 
 The project includes ETL error handling mechanisms.
 
@@ -235,7 +235,7 @@ The warehouse uses a Star Schema structure consisting of:
 
 ---
 
-# Performance Optimization Techniques
+# Planned Performance Optimization Techniques
 
 The project uses several optimization techniques:
 
