@@ -1,186 +1,374 @@
 # ETL and SCD Type 2 Implementation Using SSIS and SQL Server
 
-## Project Overview
+A complete ETL-based Data Warehouse implementation using SQL Server Integration Services (SSIS) and SQL Server with Slowly Changing Dimension (SCD) Type 2 handling for maintaining historical data.
 
-This project demonstrates the implementation of an end-to-end ETL pipeline and Slowly Changing Dimension (SCD Type 2) process using SQL Server Integration Services (SSIS) and SQL Server.
-
-The project uses the AdventureWorks2022 database as the source system and implements automated historical tracking for customer dimension changes.
-
----
-
-## Technologies Used
-
-* SQL Server
-* SQL Server Integration Services (SSIS)
-* SQL Server Management Studio (SSMS)
-* AdventureWorks2022
-* Visual Studio
+This project demonstrates real-world Data Engineering concepts, including:
+- ETL Pipeline Development
+- Data Warehouse Design
+- Star Schema Implementation
+- Slowly Changing Dimension (SCD) Type 2
+- Incremental Data Loading
+- Data Transformation & Validation
+- Historical Data Tracking
+- Analytical Reporting Readiness
 
 ---
 
-## Project Components
+# Architecture Diagram
 
-### ETL Packages
-
-* Load_DimCustomer.dtsx
-* Load_DimDate.dtsx
-* Load_DimProduct.dtsx
-* Load_DimTerritory.dtsx
-* Load_FactSales.dtsx
-* Master_ETL.dtsx
-* Single_ETL.dtsx
-
-### SCD Type 2 Package
-
-* SCD_Customer_Load.dtsx
+![Architecture](docs/architecture.png)
 
 ---
+
+# Project Objectives
+
+- Build a scalable ETL pipeline using SSIS
+- Implement SCD Type 2 for historical tracking
+- Design a Star Schema Data Warehouse
+- Perform incremental data loading
+- Create analytical data models for reporting
+- Maintain data consistency and integrity
+
+---
+
+# Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| SQL Server | Data Warehouse Database |
+| SSIS (SQL Server Integration Services) | ETL Development |
+| SQL Server Management Studio (SSMS) | Database Management |
+| Visual Studio | SSIS Package Development |
+| AdventureWorks | Source Database |
+| Power BI / Tableau | Data Visualization |
+| GitHub | Version Control & Documentation |
+
+---
+
+# Source System
+
+The project uses the AdventureWorks database as the source system.
+
+## Source Tables
+
+- Sales.SalesOrderHeader
+- Sales.SalesOrderDetail
+- Person.Customer
+- Production.Product
+- Production.ProductCategory
+- Sales.SalesTerritory
+- Sales.SalesPerson
+
+---
+
+# Data Warehouse Architecture
+
+The project follows a Star Schema architecture for analytical querying and reporting.
+
+## Dimension Tables
+
+### DimCustomer
+Stores customer information with SCD Type 2 implementation.
+
+### DimProduct
+Stores product information with historical tracking.
+
+### DimDate
+Stores date-related attributes for reporting.
+
+### DimSalesTerritory
+Stores territory and regional sales information.
+
+---
+
+## Fact Table
+
+### FactSales
+Stores transactional sales data and references all dimension tables using surrogate keys.
+
+---
+
+# ETL Workflow
+
+The ETL process follows these stages:
+
+1. Extract data from the AdventureWorks database
+2. Load extracted data into staging tables
+3. Perform data cleansing and validation
+4. Apply business transformations
+5. Implement SCD Type 2 logic
+6. Load dimension tables
+7. Load fact table
+8. Prepare warehouse for reporting and analytics
+
+---
+
+# Staging Layer
+
+A staging layer is used between source systems and the Data Warehouse.
+
+## Staging Tables
+
+- stg_Customer
+- stg_Product
+- stg_Sales
+- stg_SalesOrderHeader
+- stg_SalesOrderDetail
+
+## Benefits of Staging Layer
+
+- Improves ETL performance
+- Enables data validation
+- Supports error handling
+- Simplifies transformation logic
+- Allows retry mechanisms
+
+---
+
+# Slowly Changing Dimension (SCD) Type 2
+
+This project implements SCD Type 2 to maintain historical versions of records whenever source data changes.
 
 ## Features
 
-### ETL Pipeline
-
-* Extraction of source data from AdventureWorks2022
-* Data transformation using SSIS
-* Loading dimension and fact tables
-* Incremental data processing
-* Centralized ETL execution using Master ETL package
-
-### SCD Type 2 Implementation
-
-* Historical tracking of customer changes
-* Surrogate key implementation
-* Automatic expiration of old records
-* Insertion of new customer versions
-* Current active record identification using IsCurrent flag
+- Historical data preservation
+- Surrogate key generation
+- CurrentFlag implementation
+- StartDate and EndDate tracking
+- Automatic expiration of old records
 
 ---
 
-## Database Tables
+## SCD Type 2 Process
 
-### Staging Table
+When a source record changes:
 
-```sql
-StgCustomer
-```
-
-### Dimension Table
-
-```sql
-DimCustomer
-```
-
-### DimCustomer Columns
-
-* CustomerKey
-* CustomerID
-* BusinessEntityID
-* FirstName
-* LastName
-* EmailAddress
-* AddressLine1
-* City
-* StartDate
-* EndDate
-* IsCurrent
+1. Existing record is marked inactive
+2. EndDate is updated
+3. New record is inserted
+4. A new surrogate key is generated
+5. CurrentFlag is updated
 
 ---
 
-## SCD Type 2 Workflow
+## Example
 
-1. Load source data into staging table
-2. Compare staging data with current dimension records
-3. Detect changed records
-4. Expire old records by updating:
+### Before Update
 
-   * IsCurrent = 0
-   * EndDate = GETDATE()
-5. Insert new version of changed records
-6. Preserve historical data for reporting and auditing
+| CustomerKey | CustomerName | City | CurrentFlag |
+|---|---|---|---|
+| 1 | John | Pune | 1 |
 
----
+### After Update
 
-## SSIS Components Used
-
-* OLE DB Source
-* Lookup Transformation
-* Conditional Split
-* Derived Column
-* OLE DB Command
-* OLE DB Destination
+| CustomerKey | CustomerName | City | CurrentFlag |
+|---|---|---|---|
+| 1 | John | Pune | 0 |
+| 2 | John | Mumbai | 1 |
 
 ---
 
-## Project Workflow
+# Incremental Loading
 
-```text
-AdventureWorks2022
-        ↓
-   Staging Tables
-        ↓
- Lookup Transformation
-        ↓
-  Conditional Split
-   ├── New Records
-   ├── Changed Records
-   └── Unchanged Records
-        ↓
- SCD Type 2 Processing
-        ↓
-    DimCustomer
-```
+The ETL pipeline supports incremental loading to process only newly inserted or modified records.
+
+## Benefits
+
+- Faster execution
+- Reduced database load
+- Improved scalability
+- Better ETL performance
+- Efficient warehouse maintenance
 
 ---
 
-## Screenshots
+# Data Transformations
 
-Screenshots of the following components are included in the `screenshots` folder:
+The ETL pipeline performs multiple transformations, including:
 
-* Control Flow
-* Data Flow
-* Lookup Transformation
-* Conditional Split
-* Derived Column
-* Final DimCustomer Output
-* Successful Package Execution
-
----
-
-## Learning Outcomes
-
-* ETL pipeline development using SSIS
-* Data warehousing concepts
-* SCD Type 2 implementation
-* Incremental loading techniques
-* Historical data management
-* SSIS transformations and workflow automation
+- Lookup Transformations
+- Derived Columns
+- Data Cleansing
+- Data Validation
+- Surrogate Key Generation
+- Null Handling
+- Conditional Splits
 
 ---
 
-## Repository Structure
+# Error Handling & Logging
 
-```text
+The project includes ETL error handling mechanisms.
+
+## Features
+
+- SSIS Logging
+- Error Redirection
+- Failed Row Capture
+- Package Execution Tracking
+- Audit Logging
+
+---
+
+# Database Design
+
+## Star Schema
+
+The warehouse uses a Star Schema structure consisting of:
+- Central Fact Table
+- Multiple Dimension Tables
+- Surrogate Keys
+- Optimized Analytical Queries
+
+---
+
+# Key Features
+
+- SCD Type 2 Implementation
+- Incremental Data Loading
+- Historical Data Tracking
+- SSIS Package Orchestration
+- Star Schema Modeling
+- Data Validation & Cleansing
+- Warehouse Optimization
+- Reporting-Ready Architecture
+
+---
+
+# Performance Optimization Techniques
+
+The project uses several optimization techniques:
+
+- Incremental ETL Loading
+- Lookup Caching
+- Fast Load Options
+- Batch Inserts
+- Indexed Keys
+- Optimized Transformations
+
+---
+
+# Analytics & Reporting
+
+The warehouse is designed for analytical reporting using:
+- Power BI
+- Tableau
+- SQL Reporting Queries
+
+## Sample Analytics
+
+- Monthly Sales Trends
+- Top Selling Products
+- Territory-wise Revenue
+- Customer Purchase Analysis
+- Product Category Performance
+
+---
+
+# Project Structure
+
+```bash
 ETL-and-SCD-Type2-Implementation-Using-SSIS-and-SQL-Server/
 │
+├── SSIS Packages/
 ├── SQL Scripts/
-├── screenshots/
-├── Load_DimCustomer.dtsx
-├── Load_DimDate.dtsx
-├── Load_DimProduct.dtsx
-├── Load_DimTerritory.dtsx
-├── Load_FactSales.dtsx
-├── Master_ETL.dtsx
-├── Single_ETL.dtsx
-├── SCD_Customer_Load.dtsx
-├── SalesETL.dtproj
-├── SalesETL.sln
-├── Project.params
+├── Screenshots/
+├── docs/
+│   └── architecture.png
 ├── README.md
-└── .gitignore
 ```
 
 ---
 
-## Author
+# How to Run the Project
+
+## Prerequisites
+
+- SQL Server
+- SQL Server Integration Services (SSIS)
+- SQL Server Data Tools (SSDT)
+- Visual Studio
+- AdventureWorks Database
+
+---
+
+## Setup Steps
+
+1. Restore the AdventureWorks database
+2. Open the SSIS solution in Visual Studio
+3. Configure database connection managers
+4. Execute staging layer packages
+5. Execute dimension load packages
+6. Execute fact table load package
+7. Validate loaded warehouse data
+
+---
+
+# Screenshots
+
+## SSIS Packages
+
+(Add screenshots here)
+
+---
+
+## Data Warehouse Tables
+
+(Add screenshots here)
+
+---
+
+## SCD Type 2 Results
+
+(Add screenshots here)
+
+---
+
+## Fact Table Loading
+
+(Add screenshots here)
+
+---
+
+# Results
+
+- Successfully implemented ETL pipeline using SSIS
+- Created Star Schema Data Warehouse
+- Implemented SCD Type 2 historical tracking
+- Enabled incremental data loading
+- Prepared analytical reporting structure
+- Improved warehouse maintainability and scalability
+
+---
+
+# Future Enhancements
+
+- Power BI Dashboard Integration
+- Azure Data Factory Migration
+- Cloud Data Warehouse Integration
+- Change Data Capture (CDC)
+- Real-Time Streaming Pipeline
+- Automated Scheduling using SQL Server Agent
+- Data Quality Monitoring
+
+---
+
+# Learning Outcomes
+
+This project helped in understanding:
+- ETL Development using SSIS
+- Data Warehouse Architecture
+- SCD Type 2 Concepts
+- Incremental ETL Processing
+- Data Modeling Techniques
+- Warehouse Optimization
+- Analytical Data Preparation
+
+---
+
+# Author
 
 Soham Pujari
+
+GitHub Repository:
+https://github.com/sohampujari/ETL-and-SCD-Type2-Implementation-Using-SSIS-and-SQL-Server
